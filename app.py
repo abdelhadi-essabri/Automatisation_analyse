@@ -190,6 +190,5 @@ if "cmj" in st.session_state and "sprint" in st.session_state:
             st.session_state["knowledge_base"].append(f"Matrice de corrélation ({method}):\n{corr_matrix.to_string()}")
 
     
-    
         else:
             st.warning("Veuillez sélectionner des variables.")

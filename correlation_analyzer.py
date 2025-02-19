@@ -176,6 +176,7 @@ class CorrelationAnalyzer:
 
 # Utilisation de la classe
 """ 
+
 analyzer = CorrelationAnalyzer('Datas_Total_RAST (2).xlsx')
 cmj, sprint_1 = analyzer.load_data(1, 'CMJ')
 sprint_1 = analyzer.filter_data(sprint_1, ['Participant', 'SujetsSauts', 'J_Dominante'])
