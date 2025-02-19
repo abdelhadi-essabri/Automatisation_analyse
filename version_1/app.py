@@ -4,7 +4,7 @@ import numpy as np
 import plotly.express as px
 import seaborn as sns
 import matplotlib.pyplot as plt
-from version_1.correlation_analyzer import CorrelationAnalyzer
+from correlation_analyzer import CorrelationAnalyzer
 import ollama
 
 # Configuration de la page pour un affichage large
