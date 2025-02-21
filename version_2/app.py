@@ -122,20 +122,45 @@ if st.button("Charger les Données"):
             st.dataframe(df.head())
 
 # Détection des outliers
+
+# Vérifier si au moins un DataFrame est présent
 if "df" in st.session_state or ("df1" in st.session_state and "df2" in st.session_state):
     st.write("## 📊 Détection des Outliers")
     
-    df = st.session_state.get("df") if num_sheets == 1 else st.session_state.get("df1")
-    col_select = st.selectbox("Sélectionner une variable", df.select_dtypes(include=np.number).columns)
-    outliers = analyzer.detect_outliers(df)
-    
-    if col_select in outliers and not outliers[col_select].empty:
-        st.write(f"### 🔍 Valeurs aberrantes pour `{col_select}`")
-        st.dataframe(outliers[col_select])
-        fig = analyzer.generate_box_plot(df, col_select)
-        st.plotly_chart(fig)
+    # Si plusieurs feuilles sont chargées, laisser l'utilisateur choisir
+    if "df1" in st.session_state and "df2" in st.session_state:
+        sheet_choice = st.radio("Sélectionner la feuille", ["Feuille 1", "Feuille 2"])
+        df = st.session_state["df1"] if sheet_choice == "Feuille 1" else st.session_state["df2"]
     else:
-        st.info(f"✅ Aucune valeur aberrante détectée pour `{col_select}`.")
+        # Si une seule feuille est chargée, la récupérer proprement
+        df = st.session_state.get("df")
+        if df is None:
+            df = st.session_state.get("df1")
+
+    # Vérifier que `df` est bien défini avant de continuer
+    if df is not None and not df.empty:
+        # Sélection des colonnes numériques
+        numeric_columns = df.select_dtypes(include=np.number).columns
+        if len(numeric_columns) > 0:
+            col_select = st.selectbox("Sélectionner une variable", numeric_columns)
+            
+            # Détection des outliers
+            outliers = analyzer.detect_outliers(df)
+            
+            if col_select in outliers and not outliers[col_select].empty:
+                st.write(f"### 🔍 Valeurs aberrantes pour `{col_select}`")
+                st.dataframe(outliers[col_select])
+                fig = analyzer.generate_box_plot(df, col_select)
+                st.plotly_chart(fig)
+            else:
+                st.info(f"✅ Aucune valeur aberrante détectée pour `{col_select}`.")
+                fig = analyzer.generate_box_plot(df, col_select)
+                st.plotly_chart(fig)
+        else:
+            st.warning("Aucune colonne numérique disponible pour la détection des outliers.")
+    else:
+        st.error("Le DataFrame sélectionné est vide ou introuvable.")
+
 
 if  num_sheets == 1 and "df" in st.session_state:
     if st.button("Calculer corrélation"):
@@ -171,13 +196,15 @@ elif num_sheets == 2 and "df1" in st.session_state and "df2" in st.session_state
         if df_corr is not None and df2_corr is not None:
             st.session_state["df_corr"], st.session_state["df2_corr"] = df_corr, df2_corr
             
-            st.write("### 🔍 Données après alignement")
+            st.write(f"### 🔍 Données après alignement: {selected_sheets[0]}")
             st.dataframe(df_corr.head())
+            st.write(f"### 🔍 Données après alignement: {selected_sheets[1]}")
+            st.dataframe(df2_corr.head())
         else:
             st.error(f"Erreur : Impossible d'aligner les données. Vérifiez la présence de la colonne '{colonne_alignement}'.")
 
 
-    #if num_sheets == 2:
+if num_sheets == 2:
     if st.button("Calculer la corrélation"):
         #st.session_state["df_corr"] = df_corr
         #st.session_state["df2_corr"] = df2_corr
