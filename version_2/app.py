@@ -10,22 +10,34 @@ import requests
 
 # Configuration de la page pour un affichage large
 st.set_page_config(layout="wide")
-OLLAMA_API_URL = "https://2911-147-94-135-160.ngrok-free.app"  # Ton URL ngrok
+import requests
+
+OLLAMA_API_URL = "https://2911-147-94-135-160.ngrok-free.app"
+
 def get_ollama_response():
     try:
+        # Envoie une requête pour générer une réponse
         response = requests.get(f"{OLLAMA_API_URL}/api/generate")
-        return response.json()
+        
+        # Affiche le contenu brut de la réponse
+        st.write("Réponse brute d'Ollama:")
+        st.write(response.text)  # Montre la réponse brute avant de tenter de la décoder en JSON
+        
+        # Essaie de convertir la réponse en JSON
+        response_json = response.json()
+        return response_json
     except requests.exceptions.RequestException as e:
         st.error(f"Erreur de connexion à Ollama: {e}")
-        return None
+    except ValueError as e:
+        st.error(f"Erreur de format de données : {e}")
+        st.write(f"Réponse brute : {response.text}")
+    return None
 
-# Interface Streamlit
-st.title("Interaction avec Ollama via ngrok")
+# Utilisation de la fonction pour afficher les données
 response = get_ollama_response()
-
 if response:
     st.write(response)
-    
+
 # Dans la barre latérale (où se trouve le chatbot)
 with st.sidebar:
     st.markdown("## 💬 Assistant IA")
