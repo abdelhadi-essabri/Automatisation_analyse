@@ -8,6 +8,8 @@ from correlation_analyzer import CorrelationAnalyzer
 import ollama
 import requests
 
+# Configuration de la page pour un affichage large
+st.set_page_config(layout="wide")
 OLLAMA_API_URL = "https://2911-147-94-135-160.ngrok-free.app"  # Ton URL ngrok
 def get_ollama_response():
     try:
@@ -23,9 +25,7 @@ response = get_ollama_response()
 
 if response:
     st.write(response)
-
-# Configuration de la page pour un affichage large
-st.set_page_config(layout="wide")
+    
 # Dans la barre latérale (où se trouve le chatbot)
 with st.sidebar:
     st.markdown("## 💬 Assistant IA")
