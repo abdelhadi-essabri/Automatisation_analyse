@@ -6,6 +6,23 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from correlation_analyzer import CorrelationAnalyzer
 import ollama
+import requests
+
+OLLAMA_API_URL = "https://2911-147-94-135-160.ngrok-free.app"  # Ton URL ngrok
+def get_ollama_response():
+    try:
+        response = requests.get(f"{OLLAMA_API_URL}/api/generate")
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        st.error(f"Erreur de connexion à Ollama: {e}")
+        return None
+
+# Interface Streamlit
+st.title("Interaction avec Ollama via ngrok")
+response = get_ollama_response()
+
+if response:
+    st.write(response)
 
 # Configuration de la page pour un affichage large
 st.set_page_config(layout="wide")
@@ -66,7 +83,7 @@ with st.sidebar:
         streamed_response = ""
 
         # Générer la réponse en flux
-        for chunk in ollama.chat(model="mistral", messages=messages, stream=True):
+        for chunk in ollama.chat(model="mistral", messages=messages,base_url=OLLAMA_API_URL,stream=True):
             # Vérifier si l'utilisateur a demandé d'arrêter la réponse
             if st.session_state["stop_response"]:
                 streamed_response += "\n\n**Réponse interrompue par l'utilisateur.**"
