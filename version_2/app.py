@@ -6,13 +6,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from correlation_analyzer import CorrelationAnalyzer
 import ollama
-import requests
-
-OLLAMA_API_URL = "http://localhost:11434"  # Connexion à Ollama via Docker
-st.write(f"OLLAMA_API_URL: {OLLAMA_API_URL}")
-response = requests.get(f"{OLLAMA_API_URL}/api/generate")
-st.write(response.status_code, response.text)
-
 
 # Configuration de la page pour un affichage large
 st.set_page_config(layout="wide")
@@ -73,7 +66,7 @@ with st.sidebar:
         streamed_response = ""
 
         # Générer la réponse en flux
-        for chunk in ollama.chat(model="mistral", messages=messages, base_url=OLLAMA_API_URL, stream=True):
+        for chunk in ollama.chat(model="mistral", messages=messages, stream=True):
             # Vérifier si l'utilisateur a demandé d'arrêter la réponse
             if st.session_state["stop_response"]:
                 streamed_response += "\n\n**Réponse interrompue par l'utilisateur.**"
