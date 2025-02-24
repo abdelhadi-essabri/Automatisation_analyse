@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from correlation_analyzer import CorrelationAnalyzer
 import ollama
 
+OLLAMA_API_URL = "http://localhost:11434"  # Connexion à Ollama via Docker
 # Configuration de la page pour un affichage large
 st.set_page_config(layout="wide")
 # Dans la barre latérale (où se trouve le chatbot)
@@ -66,7 +67,7 @@ with st.sidebar:
         streamed_response = ""
 
         # Générer la réponse en flux
-        for chunk in ollama.chat(model="mistral", messages=messages, stream=True):
+        for chunk in ollama.chat(model="mistral", messages=messages, base_url=OLLAMA_API_URL, stream=True):
             # Vérifier si l'utilisateur a demandé d'arrêter la réponse
             if st.session_state["stop_response"]:
                 streamed_response += "\n\n**Réponse interrompue par l'utilisateur.**"
